@@ -66,6 +66,39 @@ Cet exercice consiste à créer une application web permettant :
 ## Pagination
 
 La pagination est configurée via deux constantes dans `config.php` :
-```php
-const PAGINATION_NB = 5; // Nombre de messages par page
-const PAGINATION_GET = "pg"; // Nom du paramètre GET pour la pagination
+- `PAGINATION_NB` : Définit le nombre de messages affichés par page (par défaut, 5).
+- `PAGINATION_GET` : Définit le nom du paramètre GET utilisé pour naviguer entre les pages (par défaut, "pg").
+
+### Fonctionnement de la pagination
+
+1. **Détection de la page actuelle** :
+   - La page actuelle est déterminée via le paramètre GET (`pg`).
+   - Si le paramètre est absent ou invalide, la page par défaut est la première (`page = 1`).
+
+2. **Calcul de l'offset** :
+   - L'offset est calculé en fonction de la page actuelle et du nombre de messages par page :
+     ```php
+     $offset = ($page - 1) * PAGINATION_NB;
+     ```
+
+3. **Récupération des messages** :
+   - Les messages correspondant à la page actuelle sont récupérés via la fonction `getMessagesPagination($db, $offset, PAGINATION_NB)`.
+
+4. **Affichage des liens de navigation** :
+   - Les liens de pagination sont générés dynamiquement en fonction du nombre total de messages et du nombre de messages par page.
+
+### Exemple d'URL pour la pagination
+
+- Page 1 : `index.php?pg=1`
+- Page 2 : `index.php?pg=2`
+- Page 3 : `index.php?pg=3`
+
+### Gestion des erreurs
+
+- Si le paramètre GET `pg` contient une valeur non valide (par exemple, un texte ou un nombre négatif), la page par défaut sera utilisée.
+- La fonction `ctype_digit()` est utilisée pour valider que le paramètre GET est un entier positif.
+
+### Bonus
+
+- Vous pouvez personnaliser le nombre de messages par page en modifiant la constante `PAGINATION_NB` dans `config.php`.
+- Ajoutez un style CSS pour améliorer l'apparence des liens de pagination dans la vue.
