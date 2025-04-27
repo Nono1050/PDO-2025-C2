@@ -89,6 +89,7 @@ endif;
         $messages,
 
 );*/
+var_dump($nbMessage);
 ?>
 </body>
 </html>

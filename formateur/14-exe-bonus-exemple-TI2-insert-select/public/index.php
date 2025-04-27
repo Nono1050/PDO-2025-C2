@@ -44,6 +44,8 @@ $insert = addMessage($db,
     $_POST['telephone'],
     $_POST['message'],
 );
+header('Location: ./');
+
 
 }
 

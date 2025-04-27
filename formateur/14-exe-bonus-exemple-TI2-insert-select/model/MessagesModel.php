@@ -1,31 +1,5 @@
 <?php
 
-// création d'une fonction qui va récupérer tous nos messages
-function getAllMessagesOrderByDateDesc(PDO $connection): array
-{
-    // préparation de la requête
-    $prepare = $connection->prepare("
-        SELECT * FROM `messages`
-        ORDER BY `messages`.`created_at` DESC
-        ");
-    // essai / erreur
-    try{
-        // exécution de la requête
-        $prepare->execute();
-
-        // on renvoie le tableau (array) indexé contenant tous les résultats (peut être vide si pas de message).
-        $result = $prepare->fetchAll();
-        // bonne pratique
-        $prepare->closeCursor();
-        return $result;
-
-        // en cas d'erreur sql
-    }catch (Exception $e){
-        // erreur de requête SQL
-        die($e->getMessage());
-    }
-
-}
 
 // création d'une fonction qui insert un message dans
 // la table `messages` en bloquant les injections SQL
@@ -77,6 +51,7 @@ function countMessages(PDO $db): int
         die($e->getMessage());
     }
 }
+
 // fonction qui ne prend que les articles visibles sur cette page
 function getMessagesPagination(PDO $con, int $offset, int $limit): array
 {
@@ -107,7 +82,7 @@ function getMessagesPagination(PDO $con, int $offset, int $limit): array
 }
 
 // création d'une fonction qui créer la pagination
-function pagination(int $nbtotalMessage, string $get="page", int $pageActu=1, int $perPage=5 ): string
+function pagination(int $nbtotalMessage, string $get, int $pageActu, int $perPage ): string
 {
 
     // variable de sortie
@@ -137,10 +112,10 @@ function pagination(int $nbtotalMessage, string $get="page", int $pageActu=1, in
                 // si nous sommes sur la page 2
             } elseif ($pageActu === 2) {
                 // tous les liens vont vers la page 1
-                $sortie .= " <a href='./'><<</a> <a href='./'><</a> <a href='./'>1</a> |";
+                $sortie .= " <a href='./'>   <<    </a> <a href='./'>   <   </a> <a href='./'>   1   </a> |";
                 // si nous sommes sur d'autres pages, le retour va vers la page précédente
             } else {
-                $sortie .= " <a href='./'><<</a> <a href='?$get=" . ($pageActu - 1) . "'><</a> <a href='./'>1</a> |";
+                $sortie .= " <a href='./'>  <<   </a> <a href='?$get=" . ($pageActu - 1) . "'>  <  </a> <a href='./'>   1   </a> |";
             }
             // nous ne sommes pas sur le premier ni dernier tour de boucle
         } elseif ($i < $nbPages) {
@@ -150,7 +125,7 @@ function pagination(int $nbtotalMessage, string $get="page", int $pageActu=1, in
                 $sortie .= "  $i |";
             } else {
                 // si nous ne sommes pas sur la page actuelle
-                $sortie .= "  <a href='?$get=$i'>$i</a> |";
+                $sortie .= "  <a href='?$get=$i'>   $i     </a> |";
             }
             // si nous sommes sur le dernier tour de boucle
         } else {
@@ -161,7 +136,7 @@ function pagination(int $nbtotalMessage, string $get="page", int $pageActu=1, in
                 // si nous ne sommes pas sur la dernière page
             } else {
                 // tous les liens vont vers la dernière page
-                $sortie .= "  <a href='?$get=$nbPages'>$nbPages</a> <a href='?$get=" . ($pageActu + 1) . "'>></a> <a href='?$get=$nbPages'>>></a>";
+                $sortie .= "  <a href='?$get=$nbPages'>  $nbPages  </a> <a href='?$get=" . ($pageActu + 1) . "'>  >   </a> <a href='?$get=$nbPages'>   >>   </a>";
             }
         }
     }
